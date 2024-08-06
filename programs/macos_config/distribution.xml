@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="1">
+    <title>Program Installer</title>
+    <options customize="always" require-scripts="false"/>
+    <choices-outline>
+        <line choice="main_program"/>
+        <line choice="secondary_program"/>
+        <line choice="monitor1_program"/>
+    </choices-outline>
+    <choice id="main_program" title="Main Program">
+        <pkg-ref id="com.example.mainprogram"/>
+    </choice>
+    <choice id="secondary_program" title="Secondary Program">
+        <pkg-ref id="com.example.secondaryprogram"/>
+    </choice>
+    <choice id="monitor1_program" title="Monitor1 Program">
+        <pkg-ref id="com.example.monitor1program"/>
+    </choice>
+    <pkg-ref id="com.example.mainprogram" installKBytes="15000" auth="root">MainProgram.pkg</pkg-ref>
+    <pkg-ref id="com.example.secondaryprogram" installKBytes="15000" auth="root">SecondaryProgram.pkg</pkg-ref>
+    <pkg-ref id="com.example.monitor1program" installKBytes="15000" auth="root">Monitor1Program.pkg</pkg-ref>
+</installer-gui-script>

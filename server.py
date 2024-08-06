@@ -1,7 +1,7 @@
 import json
 from flask import Flask, send_from_directory, request, jsonify
 import os
-from write import writetofile
+from utils.write import writetofile
 
 app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
