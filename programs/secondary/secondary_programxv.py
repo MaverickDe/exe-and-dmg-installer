@@ -62,13 +62,14 @@ def download_program(url, path):
     except Exception as e:
         print(f"Failed to download {url}: {e}")
 
-def run_program(filename):
+def run_program(filename,):
     system = platform.system()
     if system == "Windows":
         process_name = filename  # E.g., 'monitor1.exe'
     elif system == "Darwin" or system == "Linux":
         print("kdkd")
-        # os.chmod(filename, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+        os.chmod(filename, 755)
+        os.chmod(filename, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
         process_name = filename  # E.g., 'monitor1'
     else:
         print("Unsupported operating system")
@@ -80,7 +81,7 @@ def run_program(filename):
              subprocess.Popen([filename])
             elif system == "Darwin":
               print("ddk")
-              result = subprocess.run(['open', "-a", filename], capture_output=True, text=True)
+              result = subprocess.run(['open', filename], capture_output=True, text=True)
               print(result.returncode)
               print(result.stderr)
               print(result.stdout)
@@ -107,8 +108,10 @@ def check_and_run_programs():
                 try:
                     print(program_path)
                     download_program(program["url"], download_path)
-                    if platform.system() == "Darwin":
-                        extract_zip(download_path,dir)
+                    os.chmod(download_path, 755)
+                    os.chmod(download_path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+                    if platform.system() == "Darwin":...
+                    extract_zip(download_path,dir)
                         
                     time.sleep(INTERVAL)
                 except Exception as e:...

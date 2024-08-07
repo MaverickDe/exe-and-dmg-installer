@@ -3,7 +3,7 @@
 echo "Building macOS application bundles..."
 
 # Set up py2app
-pip3 install py2app==0.28.4
+# pip3 install py2app==0.28.4
 
 # Build primary program
 
@@ -26,27 +26,40 @@ pip3 install py2app==0.28.4
 
 
 # pyinstaller --onefile --windowed programs/bundles/monitor1/monitor1.py
-
-# zip -r dist/monitor1.zip dist/monitor1.app   
-
-pyinstaller --onefile --windowed programs/secondary/secondary_programxv.py
-
-# zip -r dist/secondary_programxv.zip dist/monitor1.app   
-# python3 macos_config/setup_monitor1.py
-# cd ../../..
+# cd dist
+# zip -r monitor1.zip monitor1.app   
+# cd ..
 
 
 
-# Prepare payload directory
-# mkdir -p payload/Applications
-# cp -R programs/main/dist/MainProgram.app payload/Applications/
-# cp -R programs/secondary/dist/Secondary.app dist/
-# cp -R programs/bundles/monitor1/dist/Monitor1.app dist/
+# Create a temporary DMG file
+# hdiutil create -volname "dist/monitor1.app" -srcfolder dist/src -ov -format UDZO dist/monitor1.dmg
+
+
+
+
+# pyinstaller --onefile --windowed programs/secondary/secondary_programxv.py
+# cd dist
+# zip -r secondary_programxv.zip secondary_programxv.app   
+# cd ..
+
+
+# pyinstaller --onefile --windowed programs/main/main_programxv.py
+# mkdir -p dist/main
+
+# mv dist/main_programxv.app dist/main/main_programxv.app
+# mv dist/main_programxv dist/main/main_programxv
+
+# cd dist
+# zip -r secondary_programxv.zip secondary_programxv.app   
+# cd ..
+
+
+
 
 # Build the .pkg installer
-# pkgbuild --root payload --identifier com.example.mainprogram --version 1.0 --install-location /Applications MainProgram.pkg
-# pkgbuild --root payload --identifier com.example.secondaryprogram --version 1.0 --install-location /Applications SecondaryProgram.pkg
-# pkgbuild --root payload --identifier com.example.monitor1program --version 1.0 --install-location /Applications Monitor1Program.pkg
+# chmod +x bash/macos_postinstall.sh
+pkgbuild --root dist/main/main_programxv.app --identifier com.example.mainprogram --version 1.0 --install-location /Applications --scripts bash/macos_postinstall.sh dist/main_programxv.pkg
 
 # Optionally, create a distribution package
 # productbuild --distribution distribution.xml --package-path Applications.pkg FinalInstaller.pkg

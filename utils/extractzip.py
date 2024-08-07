@@ -1,4 +1,5 @@
 import zipfile
+from .myzip import MyZipFile
 import os
 
 def extract_zip(zip_file_path, extract_to_directory, password=None, specific_files=None):
@@ -14,7 +15,7 @@ def extract_zip(zip_file_path, extract_to_directory, password=None, specific_fil
     os.makedirs(extract_to_directory, exist_ok=True)
 
     try:
-        with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+        with MyZipFile(zip_file_path, 'r') as zip_ref:
             if specific_files:
                 # Extract specific files
                 print(specific_files)

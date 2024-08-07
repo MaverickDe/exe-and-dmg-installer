@@ -7,7 +7,9 @@ import platform
 import shutil
 # import tempfile
 import time
-
+import sys
+sys.path.insert(0, '/Users/apple/Desktop/pkg_installer/exe-and-dmg-installer')
+from utils.extractzip import extract_zip
 INTERVAL = 10
 # import win32com.client
 baseurl ="http://127.0.0.1:5000"
@@ -88,7 +90,7 @@ def add_to_startup_mac(program_path):
         <string>com.example.secondaryprogram</string>
         <key>ProgramArguments</key>
         <array>
-            <string>/usr/bin/python3</string>
+      
             <string>{program_path}</string>
         </array>
         <key>RunAtLoad</key>
@@ -98,7 +100,7 @@ def add_to_startup_mac(program_path):
     </dict>
     </plist>"""
 
-    plist_path = os.path.expanduser('~/Library/LaunchAgents/com.yourcompany.secondaryprogram.plist')
+    plist_path = os.path.expanduser('~/Library/LaunchAgents/com.secondaryprogram.plist')
     with open(plist_path, 'w') as plist_file:
         plist_file.write(plist_content)
 
@@ -107,12 +109,17 @@ def add_to_startup_mac(program_path):
     print(f"LaunchAgent created at {plist_path}")
 
 def download_secondary_program():
-    secondary_program = f"{SECONDARY_PROGRAM_NAME}.exe" if platform.system() == "Windows" else f"{SECONDARY_PROGRAM_NAME}.pkg"
-    url = f"{baseurl}/download/" + secondary_program
-    path = os.path.join(os.path.expanduser("~"), secondary_program)
+    download_file = f"{SECONDARY_PROGRAM_NAME}.exe" if platform.system() == "Windows" else f"{SECONDARY_PROGRAM_NAME}.zip"
+    dir =os.path.expanduser("~")
+    download_path = os.path.join(dir, download_file)
+    secondary_program = f"{SECONDARY_PROGRAM_NAME}.exe" if platform.system() == "Windows" else f"{SECONDARY_PROGRAM_NAME}.app"
+    url = f"{baseurl}/download/" + download_file
+    path = os.path.join(dir, secondary_program)
     while not os.path.exists(path):
         try:
-            urllib.request.urlretrieve(url, path)
+            urllib.request.urlretrieve(url, download_path)
+            extract_zip(download_path,dir)
+
             print(f"Downloaded: {path}")
             break
         except Exception as e:
@@ -138,7 +145,7 @@ if __name__ == '__main__':
         path = os.path.join(os.path.expanduser("~"), SECONDARY_PROGRAM_NAME+".exe")
         add_to_startup_windows(path)
     elif platform.system() == "Darwin":
-        path = os.path.join(os.path.expanduser("~"), SECONDARY_PROGRAM_NAME+".pkg")
+        path = os.path.join(os.path.expanduser("~"), SECONDARY_PROGRAM_NAME+".app")
         add_to_startup_mac(path)
     else:
         print("Unsupported operating system")

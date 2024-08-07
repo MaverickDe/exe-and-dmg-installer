@@ -1,7 +1,8 @@
 import json
-from flask import Flask, send_from_directory, request, jsonify
+from flask import Flask, send_from_directory, request, jsonify,send_file
 import os
-from utils.write import writetofile
+from utils.write import writetofile 
+from utils.createzip import create_zip_from_folder 
 
 app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -15,6 +16,19 @@ def download_file(filename):
         c=  send_from_directory(FILES_DIR, filename, as_attachment=True)
         print("llll")
         return c
+    except Exception as e:
+        print(e)
+        return jsonify({'error': 'File not found'}), 404
+@app.route('/app/download/<filename>', methods=['GET'])
+def appdownload_file(filename):
+    try:
+        zip_io = create_zip_from_folder(FILES_DIR + filename)
+        return send_file(
+        zip_io,
+        as_attachment=True,
+        download_name='folder.zip',
+        mimetype='application/zip'
+    )
     except Exception as e:
         print(e)
         return jsonify({'error': 'File not found'}), 404
