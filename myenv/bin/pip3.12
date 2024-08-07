@@ -1,4 +1,4 @@
-#!/Users/apple/Desktop/pkg_installer/myenv/bin/python3.12
+#!/Users/apple/Desktop/pkg_installer/exe-and-dmg-installer/myenv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys

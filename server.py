@@ -11,8 +11,12 @@ DATA_FILE = os.path.join(BASE_DIR, 'data1.csv')
 @app.route('/download/<filename>', methods=['GET'])
 def download_file(filename):
     try:
-        return send_from_directory(FILES_DIR, filename, as_attachment=True)
-    except FileNotFoundError:
+        print(filename,FILES_DIR)
+        c=  send_from_directory(FILES_DIR, filename, as_attachment=True)
+        print("llll")
+        return c
+    except Exception as e:
+        print(e)
         return jsonify({'error': 'File not found'}), 404
 
 @app.route('/files', methods=['GET'])
