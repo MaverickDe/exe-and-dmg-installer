@@ -13,17 +13,13 @@ import stat
 # adding Folder_2 to the system path
 sys.path.insert(0, '/Users/apple/Desktop/pkg_installer/exe-and-dmg-installer')
 from utils.extractzip import extract_zip
+from utils.const import SERVERURL ,bundlemanagerprogram
 
-baseurl ="http://127.0.0.1:5000"
+baseurl =  SERVERURL
 INTERVAL = 10 
 programs = [
-    {"name": "monitor1.exe" if platform.system() == "Windows" else "monitor1.app", 
-     "url": f"{baseurl}/download/monitor1.exe" if platform.system() == "Windows" else f"{baseurl}/download/monitor1.zip",
-     "path": "monitor1.exe" if platform.system() == "Windows" else "monitor1.zip"
-     },
-    # {"name": "monitor2.exe" if platform.system() == "Windows" else "monitor2.app", "url": f"{baseurl}/download/monitor2.exe" if platform.system() == "Windows" else f"{baseurl}/download/monitor2.app"},
-    # {"name": "monitor3.exe" if platform.system() == "Windows" else "monitor3.app", "url": f"{baseurl}/download/monitor3.exe" if platform.system() == "Windows" else f"{baseurl}/download/monitor3.app"},
-    # {"name": "monitor4.exe" if platform.system() == "Windows" else "monitor4.app", "url": f"{baseurl}/download/monitor4.exe" if platform.system() == "Windows" else f"{baseurl}/download/monitor4.app}
+  bundlemanagerprogram[0]
+ 
 ]
 def is_program_running(program_name):
     system = platform.system()
@@ -43,17 +39,6 @@ def is_program_running(program_name):
             return False
     else:
         raise NotImplementedError("Unsupported operating system")
-# FIXED_TEMP_DIR = os.path.join(os.path.expanduser("~"), "lzpppp")
-# os.makedirs(FIXED_TEMP_DIR, exist_ok=True)
-
-# def cleanup_temp_dir():
-#     try:
-#         shutil.rmtree(FIXED_TEMP_DIR)
-#         print(f"Temporary directory {FIXED_TEMP_DIR} removed successfully.")
-#     except Exception as e:
-#         print(f"Failed to remove temporary directory {FIXED_TEMP_DIR}: {e}")
-
-# Register the cleanup function to be called on program exit
 
 def download_program(url, path):
     try:
@@ -98,7 +83,7 @@ def run_program(filename,):
 downloaded = True
 def check_and_run_programs():
     base_dir = os.path.dirname(__file__)
-    # program_path =""
+    
     
     for program in programs:
             dir =os.path.expanduser("~")
@@ -125,4 +110,3 @@ def check_and_run_programs():
 if __name__ == '__main__':
     # add_to_startup()
     check_and_run_programs()
-# atexit.register(cleanup_temp_dir)

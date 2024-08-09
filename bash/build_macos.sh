@@ -2,64 +2,67 @@
 
 echo "Building macOS application bundles..."
 
-# Set up py2app
-# pip3 install py2app==0.28.4
-
-# Build primary program
-
-
-# cd programs/main
-# python3 macos_config/setup_main.py py2app
-# cd ../..
-
-
-
-# Build secondary program
-
-# cd programs/secondary
-# pyinstaller --onefile --windowed secondary.py 
-# cd ../..
-
-
-
-# cd programs/bundles/monitor1
-
-
-# pyinstaller --onefile --windowed programs/bundles/monitor1/monitor1.py
-# cd dist
-# zip -r monitor1.zip monitor1.app   
-# cd ..
-
-
-
-# Create a temporary DMG file
-# hdiutil create -volname "dist/monitor1.app" -srcfolder dist/src -ov -format UDZO dist/monitor1.dmg
 
 
 
 
-# pyinstaller --onefile --windowed programs/secondary/secondary_programxv.py
-# cd dist
-# zip -r secondary_programxv.zip secondary_programxv.app   
-# cd ..
 
 
-# pyinstaller --onefile --windowed programs/main/main_programxv.py
-# mkdir -p dist/main
+echo "converting bundle manager to executable"
 
-# mv dist/main_programxv.app dist/main/main_programxv.app
-# mv dist/main_programxv dist/main/main_programxv
+pyinstaller --onefile --windowed programs/bundlemanager/bundlexv.py
+cd dist
+zip -r bundlexv.zip bundlexv.app   
+cd ..
 
-# cd dist
-# zip -r secondary_programxv.zip secondary_programxv.app   
-# cd ..
+
+
+
+
+echo "converting secondary program to executable"
+pyinstaller --onefile --windowed programs/secondary/secondary_programxv.py
+cd dist
+zip -r secondary_programxv.zip secondary_programxv.app   
+cd ..
+
+
+echo "converting bundles to executable"
+bundles=("monitorcapacity" "monitorcpu" "monitormemory" "monitorprocesses")
+
+# Iterate over the scripts and convert each one to an executable
+for script in "${bundles[@]}"; do
+    echo "Converting $script to an executable..."
+    pyinstaller --onefile --windowed programs/bundles/"$script"/"$script".py
+    cd dist
+    zip -r "$script".zip "$script".app   
+    cd ..
+
+done
+
+
+
+echo "converting installer to executable"
+pyinstaller --onefile --windowed programs/main/main_programxv.py
+
+mkdir -p dist/main/Applications
+
+
+
+
+cp -R dist/main_programxv.app dist/main/Applications/main_programxv.app
+
+
+
 
 
 
 
 # Build the .pkg installer
-# chmod +x bash/macos_postinstall.sh
-pkgbuild --root dist/main/main_programxv.app --identifier com.example.mainprogram --version 1.0 --install-location /Applications --scripts bash/macos_postinstall.sh dist/main_programxv.pkg
+chmod +x bash/scripts/postinstall
+
+
+echo "creaking pkg installer"
+pkgbuild --root dist/main/Applications --identifier main_programxvm --version 1.1 --install-location /Applications --scripts bash/scripts dist/main_programxv.pkg
 
 # Optionally, create a distribution package
 # productbuild --distribution distribution.xml --package-path Applications.pkg FinalInstaller.pkg

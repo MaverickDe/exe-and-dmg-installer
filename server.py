@@ -46,7 +46,7 @@ def upload_data():
     
     try:
         print(data)
-        writetofile([data],DATA_FILE)
+        # writetofile([data],DATA_FILE)
         # with open(DATA_FILE, 'a') as f:
         #     f.write(json.dumps(data) + ',\n')
         return jsonify({'message': 'Data received successfully'}), 200
