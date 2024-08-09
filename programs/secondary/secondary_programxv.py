@@ -65,11 +65,9 @@ def run_program(filename,):
             if system == "Windows":
              subprocess.Popen([filename])
             elif system == "Darwin":
-              print("ddk")
+           
               result = subprocess.run(['open', filename], capture_output=True, text=True)
-              print(result.returncode)
-              print(result.stderr)
-              print(result.stdout)
+             
 
             else :
                 print("non for now")

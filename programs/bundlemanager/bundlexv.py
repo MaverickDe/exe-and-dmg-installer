@@ -60,13 +60,12 @@ def run_program(filename,):
     if not is_program_running(process_name):
         try:
             if system == "Windows":
-             subprocess.Popen([filename])
+             subprocess.Popen([filename],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             elif system == "Darwin":
-              print("ddk")
-              result = subprocess.run(['open', filename], capture_output=True, text=True)
-              print(result.returncode)
-              print(result.stderr)
-              print(result.stdout)
+             
+            #   result = subprocess.run(['open', filename], capture_output=True, text=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+              result = subprocess.run(['open', filename], capture_output=True, text=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+         
 
             else :
                 print("non for now")

