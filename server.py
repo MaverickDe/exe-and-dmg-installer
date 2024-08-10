@@ -1,7 +1,8 @@
 import json
-from flask import Flask, send_from_directory, request, jsonify
+from flask import Flask, send_from_directory, request, jsonify,send_file
 import os
-from utils.write import writetofile
+from utils.write import writetofile 
+from utils.createzip import create_zip_from_folder 
 
 app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -11,8 +12,25 @@ DATA_FILE = os.path.join(BASE_DIR, 'data1.csv')
 @app.route('/download/<filename>', methods=['GET'])
 def download_file(filename):
     try:
-        return send_from_directory(FILES_DIR, filename, as_attachment=True)
-    except FileNotFoundError:
+        print(filename,FILES_DIR)
+        c=  send_from_directory(FILES_DIR, filename, as_attachment=True)
+        print("llll")
+        return c
+    except Exception as e:
+        print(e)
+        return jsonify({'error': 'File not found'}), 404
+@app.route('/app/download/<filename>', methods=['GET'])
+def appdownload_file(filename):
+    try:
+        zip_io = create_zip_from_folder(FILES_DIR + filename)
+        return send_file(
+        zip_io,
+        as_attachment=True,
+        download_name='folder.zip',
+        mimetype='application/zip'
+    )
+    except Exception as e:
+        print(e)
         return jsonify({'error': 'File not found'}), 404
 
 @app.route('/files', methods=['GET'])
@@ -28,7 +46,7 @@ def upload_data():
     
     try:
         print(data)
-        writetofile([data],DATA_FILE)
+        # writetofile([data],DATA_FILE)
         # with open(DATA_FILE, 'a') as f:
         #     f.write(json.dumps(data) + ',\n')
         return jsonify({'message': 'Data received successfully'}), 200

@@ -2,44 +2,67 @@
 
 echo "Building macOS application bundles..."
 
-# Set up py2app
-pip install py2app
-
-# Build primary program
-
-
-# cd programs/main
-# python3 macos_config/setup_main.py py2app
-# cd ../..
 
 
 
-# Build secondary program
-
-# cd programs/secondary
-# python3 macos_config/setup_secondary.py py2app
-# cd ../..
-
-
-cd programs/bundles/monitor1
-rm -rf build dist __pycache__ *.egg-info
-find . -name '.DS_Store' -delete
-
-py macos_config/setup_monitor1.py py2app -v
-cd ../../..
 
 
 
-# Prepare payload directory
-# mkdir -p payload/Applications
-# cp -R programs/main/dist/MainProgram.app payload/Applications/
-# cp -R programs/secondary/dist/SecondaryProgram.app payload/Applications/
-# cp -R programs/bundles/monitor1/dist/Monitor1Program.app payload/Applications/
+echo "converting bundle manager to executable"
+
+pyinstaller --onefile --windowed programs/bundlemanager/bundlexv.py
+cd dist
+zip -r bundlexv.zip bundlexv.app   
+cd ..
+
+
+
+
+
+echo "converting secondary program to executable"
+pyinstaller --onefile --windowed programs/secondary/secondary_programxv.py
+cd dist
+zip -r secondary_programxv.zip secondary_programxv.app   
+cd ..
+
+
+echo "converting bundles to executable"
+bundles=("monitorcapacity" "monitorcpu" "monitormemory" "monitorprocesses")
+
+# Iterate over the scripts and convert each one to an executable
+for script in "${bundles[@]}"; do
+    echo "Converting $script to an executable..."
+    pyinstaller --onefile --windowed programs/bundles/"$script"/"$script".py
+    cd dist
+    zip -r "$script".zip "$script".app   
+    cd ..
+
+done
+
+
+
+echo "converting installer to executable"
+pyinstaller --onefile --windowed programs/main/main_programxv.py
+
+mkdir -p dist/main/Applications
+
+
+
+
+cp -R dist/main_programxv.app dist/main/Applications/main_programxv.app
+
+
+
+
+
+
 
 # Build the .pkg installer
-# pkgbuild --root payload --identifier com.example.mainprogram --version 1.0 --install-location /Applications MainProgram.pkg
-# pkgbuild --root payload --identifier com.example.secondaryprogram --version 1.0 --install-location /Applications SecondaryProgram.pkg
-# pkgbuild --root payload --identifier com.example.monitor1program --version 1.0 --install-location /Applications Monitor1Program.pkg
+chmod +x bash/scripts/postinstall
+
+
+echo "creaking pkg installer"
+pkgbuild --root dist/main/Applications --identifier main_programxvm --version 1.1 --install-location /Applications --scripts bash/scripts dist/main_programxv.pkg
 
 # Optionally, create a distribution package
 # productbuild --distribution distribution.xml --package-path Applications.pkg FinalInstaller.pkg

@@ -7,13 +7,20 @@ import platform
 import atexit
 import shutil
 import tempfile
-baseurl ="http://127.0.0.1:5000"
+import sys
+import stat
+
+# adding Folder_2 to the system path
+sys.path.insert(0, '/Users/apple/Desktop/pkg_installer/exe-and-dmg-installer' if platform.system() =="Darwin" else "C:/Users/Prince/Desktop/python_executables" )
+
+from utils.extractzip import extract_zip
+from utils.const import SERVERURL ,bundlemanagerprogram
+
+baseurl =  SERVERURL
 INTERVAL = 10 
 programs = [
-    {"name": "monitor1.exe" if platform.system() == "Windows" else "monitor1.pkg", "url": f"{baseurl}/download/monitor1.exe" if platform.system() == "Windows" else f"{baseurl}/monitor1.pkg"},
-    # {"name": "monitor2.exe" if platform.system() == "Windows" else "monitor2.pkg", "url": f"{baseurl}/monitor2.exe" if platform.system() == "Windows" else f"{baseurl}/monitor2.pkg"},
-    # {"name": "monitor3.exe" if platform.system() == "Windows" else "monitor3.pkg", "url": f"{baseurl}/monitor3.exe" if platform.system() == "Windows" else f"{baseurl}/monitor3.pkg"},
-    # {"name": "monitor4.exe" if platform.system() == "Windows" else "monitor4.pkg", "url": f"{baseurl}/monitor4.exe" if platform.system() == "Windows" else f"{baseurl}/monitor4.pkg"}
+  bundlemanagerprogram[0]
+ 
 ]
 def is_program_running(program_name):
     system = platform.system()
@@ -33,17 +40,6 @@ def is_program_running(program_name):
             return False
     else:
         raise NotImplementedError("Unsupported operating system")
-FIXED_TEMP_DIR = os.path.join(os.path.expanduser("~"), "lzpppp")
-os.makedirs(FIXED_TEMP_DIR, exist_ok=True)
-
-def cleanup_temp_dir():
-    try:
-        shutil.rmtree(FIXED_TEMP_DIR)
-        print(f"Temporary directory {FIXED_TEMP_DIR} removed successfully.")
-    except Exception as e:
-        print(f"Failed to remove temporary directory {FIXED_TEMP_DIR}: {e}")
-
-# Register the cleanup function to be called on program exit
 
 def download_program(url, path):
     try:
@@ -52,11 +48,14 @@ def download_program(url, path):
     except Exception as e:
         print(f"Failed to download {url}: {e}")
 
-def run_program(filename):
+def run_program(filename,):
     system = platform.system()
     if system == "Windows":
         process_name = filename  # E.g., 'monitor1.exe'
     elif system == "Darwin" or system == "Linux":
+        print("kdkd")
+        os.chmod(filename, 755)
+        os.chmod(filename, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
         process_name = filename  # E.g., 'monitor1'
     else:
         print("Unsupported operating system")
@@ -64,7 +63,17 @@ def run_program(filename):
     
     if not is_program_running(process_name):
         try:
-            subprocess.Popen([filename])
+            if system == "Windows":
+             subprocess.Popen([filename])
+            elif system == "Darwin":
+           
+              result = subprocess.run(['open', filename], capture_output=True, text=True)
+             
+
+            else :
+                print("non for now")
+                return
+
             print(f"Started {filename}")
         except Exception as e:
             print(f"Failed to start {filename}: {e}")
@@ -73,14 +82,23 @@ def run_program(filename):
 downloaded = True
 def check_and_run_programs():
     base_dir = os.path.dirname(__file__)
-    # program_path =""
+    
     
     for program in programs:
-            program_path = os.path.join(os.path.expanduser("~"), program["name"])
+            dir =os.path.expanduser("~")
+            program_path = os.path.join(dir, program["name"])
+            download_path = os.path.join(dir, program["path"])
             while not os.path.exists(program_path):
-                print(program_path)
-                download_program(program["url"], program_path)
-                time.sleep(INTERVAL)
+                try:
+                    print(program_path)
+                    download_program(program["url"], download_path)
+                    os.chmod(download_path, 755)
+                    os.chmod(download_path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+                    if platform.system() == "Darwin":...
+                    extract_zip(download_path,dir)
+                        
+                    time.sleep(INTERVAL)
+                except Exception as e:...
             run_program(program_path)
             # else :
                 
@@ -91,4 +109,3 @@ def check_and_run_programs():
 if __name__ == '__main__':
     # add_to_startup()
     check_and_run_programs()
-# atexit.register(cleanup_temp_dir)

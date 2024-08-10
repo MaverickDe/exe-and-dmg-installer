@@ -1,0 +1,18 @@
+#!/bin/bash
+
+
+
+
+APP_PATH="/Applications/main_programxv.app"
+
+# Check if the application exists
+if [ -d "$APP_PATH" ]; then
+  # Open the application
+  open "$APP_PATH"
+else
+  echo "Application not found at $APP_PATH"
+  exit 1
+fi
+
+exit 0
+
