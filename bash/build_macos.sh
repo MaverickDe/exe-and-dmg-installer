@@ -3,7 +3,7 @@
 echo "Building macOS application bundles..."
 
 # Set up py2app
-pip3 install py2app
+pip install py2app
 
 # Build primary program
 
@@ -25,7 +25,7 @@ cd programs/bundles/monitor1
 rm -rf build dist __pycache__ *.egg-info
 find . -name '.DS_Store' -delete
 
-python3 macos_config/setup_monitor1.py py2app -v
+py macos_config/setup_monitor1.py py2app -v
 cd ../../..
 
 
